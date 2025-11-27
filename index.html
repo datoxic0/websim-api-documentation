@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Websim API Documentation</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+      {
+        "imports": {
+          "main": "./script.js"
+        }
+      }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Websim API Documentation</h1>
+    </header>
+    <div class="container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#authentication">Authentication</a></li>
+                <li><a href="#endpoints">Endpoints</a>
+                    <ul>
+                        <li><a href="#get-users">GET /users</a></li>
+                        <li><a href="#get-user-by-id">GET /users/{id}</a></li>
+                        <li><a href="#post-users">POST /users</a></li>
+                        <li><a href="#put-user">PUT /users/{id}</a></li>
+                        <li><a href="#delete-user">DELETE /users/{id}</a></li>
+                    </ul>
+                </li>
+                 <li><a href="#errors">Error Handling</a></li>
+            </ul>
+        </nav>
+        <main>
+            <section id="introduction">
+                <h2>Introduction</h2>
+                <p>Welcome to the Websim API documentation. This API allows you to interact with the Websim platform programmatically.</p>
+                <p>The base URL for all API endpoints is: <code>https://api.websim.dev/v1</code></p>
+            </section>
+            <section id="authentication">
+                <h2>Authentication</h2>
+                <p>The Websim API uses API Keys to authenticate requests. You can view and manage your API keys in the Websim Dashboard.</p>
+                <p>Your API Key must be included in all API requests to the server in a header that looks like the following:</p>
+                <pre><code>Authorization: Bearer YOUR_API_KEY</code></pre>
+                <p>For this interactive documentation, you can use the key <code>websim_dev_key</code>.</p>
+                <div class="api-key-input">
+                    <label for="apiKey">API Key:</label>
+                    <input type="text" id="apiKey" value="websim_dev_key">
+                </div>
+            </section>
+            <section id="endpoints">
+                <h2>Endpoints</h2>
+                <p>This section details the available API endpoints.</p>
+
+                <article id="get-users">
+                    <h3>Get All Users</h3>
+                    <p><span class="method get">GET</span> <code>/users</code></p>
+                    <p>Retrieves a list of all users.</p>
+                    <h4>Query Parameters</h4>
+                    <ul>
+                        <li><code>limit</code> (optional, integer): The maximum number of users to return. Default is 20.</li>
+                        <li><code>offset</code> (optional, integer): The number of users to skip. Used for pagination. Default is 0.</li>
+                    </ul>
+                    <h4>Example Request</h4>
+                    <pre><code>curl -X GET "https://api.websim.dev/v1/users?limit=10" \
+ -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+                    <h4>Example Response (200 OK)</h4>
+                    <pre><code>{
+  "data": [
+    {
+      "id": "user_1",
+      "username": "alice",
+      "created_at": "2023-10-27T10:00:00Z"
+    },
+    {
+      "id": "user_2",
+      "username": "bob",
+      "created_at": "2023-10-27T10:05:00Z"
+    }
+  ],
+  "has_more": true
+}</code></pre>
+                    <div class="try-it-out" data-endpoint="/users" data-method="GET">
+                        <h4>Try it out</h4>
+                        <div class="params">
+                            <input type="number" data-param="limit" placeholder="limit (e.g., 10)">
+                            <input type="number" data-param="offset" placeholder="offset (e.g., 0)">
+                        </div>
+                        <button class="execute-btn">Execute</button>
+                        <div class="response-container"></div>
+                    </div>
+                </article>
+
+                <article id="get-user-by-id">
+                    <h3>Get a Specific User</h3>
+                    <p><span class="method get">GET</span> <code>/users/{id}</code></p>
+                    <p>Retrieves a specific user by their unique ID.</p>
+                    <h4>Path Parameters</h4>
+                    <ul>
+                        <li><code>id</code> (required, string): The ID of the user to retrieve.</li>
+                    </ul>
+                    <h4>Example Request</h4>
+                    <pre><code>curl -X GET "https://api.websim.dev/v1/users/user_1" \
+ -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+                    <h4>Example Response (200 OK)</h4>
+                    <pre><code>{
+  "id": "user_1",
+  "username": "alice",
+  "email": "alice@example.com",
+  "created_at": "2023-10-27T10:00:00Z"
+}</code></pre>
+                    <div class="try-it-out" data-endpoint="/users/{id}" data-method="GET">
+                        <h4>Try it out</h4>
+                        <div class="params">
+                            <input type="text" data-param="id" placeholder="id (e.g., user_1)" required>
+                        </div>
+                        <button class="execute-btn">Execute</button>
+                        <div class="response-container"></div>
+                    </div>
+                </article>
+
+                <article id="post-users">
+                    <h3>Create a User</h3>
+                    <p><span class="method post">POST</span> <code>/users</code></p>
+                    <p>Creates a new user.</p>
+                    <h4>Request Body (JSON)</h4>
+                    <ul>
+                        <li><code>username</code> (required, string): The desired username. Must be unique.</li>
+                        <li><code>email</code> (required, string): The user's email address. Must be unique.</li>
+                        <li><code>password</code> (required, string): The user's password.</li>
+                    </ul>
+                    <h4>Example Request</h4>
+                    <pre><code>curl -X POST "https://api.websim.dev/v1/users" \
+ -H "Authorization: Bearer YOUR_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+   "username": "charlie",
+   "email": "charlie@example.com",
+   "password": "supersecretpassword"
+ }'</code></pre>
+                    <h4>Example Response (201 Created)</h4>
+                    <pre><code>{
+  "id": "user_3",
+  "username": "charlie",
+  "email": "charlie@example.com",
+  "created_at": "2023-10-27T11:00:00Z"
+}</code></pre>
+                    <div class="try-it-out" data-endpoint="/users" data-method="POST">
+                        <h4>Try it out</h4>
+                        <p>Request Body:</p>
+                        <textarea class="body-input" rows="6">{
+  "username": "charlie",
+  "email": "charlie@example.com",
+  "password": "supersecretpassword"
+}</textarea>
+                        <button class="execute-btn">Execute</button>
+                        <div class="response-container"></div>
+                    </div>
+                </article>
+
+                <article id="put-user">
+                    <h3>Update a User</h3>
+                    <p><span class="method put">PUT</span> <code>/users/{id}</code></p>
+                    <p>Updates an existing user's information.</p>
+                    <h4>Path Parameters</h4>
+                    <ul>
+                        <li><code>id</code> (required, string): The ID of the user to update.</li>
+                    </ul>
+                    <h4>Request Body (JSON)</h4>
+                    <ul>
+                        <li><code>email</code> (optional, string): The new email for the user.</li>
+                    </ul>
+                    <h4>Example Request</h4>
+                    <pre><code>curl -X PUT "https://api.websim.dev/v1/users/user_3" \
+ -H "Authorization: Bearer YOUR_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+   "email": "charlie.new@example.com"
+ }'</code></pre>
+                    <h4>Example Response (200 OK)</h4>
+                    <pre><code>{
+  "id": "user_3",
+  "username": "charlie",
+  "email": "charlie.new@example.com",
+  "created_at": "2023-10-27T11:00:00Z"
+}</code></pre>
+                    <div class="try-it-out" data-endpoint="/users/{id}" data-method="PUT">
+                        <h4>Try it out</h4>
+                         <div class="params">
+                            <input type="text" data-param="id" placeholder="id (e.g., user_3)" required>
+                        </div>
+                        <p>Request Body:</p>
+                        <textarea class="body-input" rows="3">{
+  "email": "charlie.new@example.com"
+}</textarea>
+                        <button class="execute-btn">Execute</button>
+                        <div class="response-container"></div>
+                    </div>
+                </article>
+
+                <article id="delete-user">
+                    <h3>Delete a User</h3>
+                    <p><span class="method delete">DELETE</span> <code>/users/{id}</code></p>
+                    <p>Permanently deletes a user.</p>
+                    <h4>Path Parameters</h4>
+                    <ul>
+                        <li><code>id</code> (required, string): The ID of the user to delete.</li>
+                    </ul>
+                    <h4>Example Request</h4>
+                    <pre><code>curl -X DELETE "https://api.websim.dev/v1/users/user_3" \
+ -H "Authorization: Bearer YOUR_API_KEY"</code></pre>
+                    <h4>Example Response (204 No Content)</h4>
+                    <p>An empty response body is returned on successful deletion.</p>
+                     <div class="try-it-out" data-endpoint="/users/{id}" data-method="DELETE">
+                        <h4>Try it out</h4>
+                        <div class="params">
+                            <input type="text" data-param="id" placeholder="id (e.g., user_3)" required>
+                        </div>
+                        <button class="execute-btn">Execute</button>
+                        <div class="response-container"></div>
+                    </div>
+                </article>
+
+            </section>
+            <section id="errors">
+                <h2>Error Handling</h2>
+                <p>The Websim API uses conventional HTTP response codes to indicate the success or failure of an API request.</p>
+                <ul>
+                    <li>Codes in the <code>2xx</code> range indicate success.</li>
+                    <li>Codes in the <code>4xx</code> range indicate a client error (e.g., a required parameter was omitted).</li>
+                    <li>Codes in the <code>5xx</code> range indicate a server error.</li>
+                </ul>
+                <h4>Example Error Response (404 Not Found)</h4>
+                <pre><code>{
+  "error": {
+    "type": "invalid_request_error",
+    "message": "No such user: user_999"
+  }
+}</code></pre>
+            </section>
+        </main>
+    </div>
+    <script type="module" src="main"></script>
+</body>
+</html>
